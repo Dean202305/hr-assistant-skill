@@ -1,8 +1,23 @@
-# HR Assistant Skill
+# HR Assistant：通用 HR Agent Skill
 
-一个面向中国大陆人力资源日常工作的 Codex Skill，帮助 HR 将自然语言需求转换为可维护、可复核的表格、简历分析结果、内部公告和自动化任务。
+一个面向中国大陆人力资源日常工作的通用 Agent Skill，帮助 HR 将自然语言需求转换为可维护、可复核的表格、简历分析结果、内部公告和自动化任务。
+
+核心采用通用的 `SKILL.md + references/` 目录结构，不绑定特定模型，可安装到 Codex、Claude Code、WorkBuddy、DeepSeek Harness、OpenClaw，以及其他能够读取目录式 Agent Skills 的软件或智能体框架。
 
 它不仅生成内容，还强调公式正确性、政策时效性、证据可追溯、敏感数据保护和人工复核边界，适合需要提升执行效率，同时希望降低数据错误与用工风险的 HR 团队。
+
+## 平台兼容性
+
+| 平台 | 支持方式 | 调用方式 |
+| --- | --- | --- |
+| Codex | 将目录安装到用户或项目 Skills 目录 | 使用 `$hr-assistant` 或自然语言触发 |
+| Claude Code | 安装到全局或项目 `.claude/skills/` | 使用 `/hr-assistant` 或由 Claude 自动选择 |
+| WorkBuddy | 将仓库打包为 ZIP，通过技能创建/导入入口安装 | 在会话中选择或调用已安装技能 |
+| DeepSeek Harness | 安装到 `.dsh/skills/`、`.agents/skills/` 或配置的自定义目录 | 通过技能目录或 Skill 工具加载 |
+| OpenClaw | 安装到工作区 `skills/`、`.agents/skills/` 或用户技能目录 | 使用 `$hr-assistant` 或技能选择器 |
+| 其他 Agent Harness | 将完整目录加入其技能搜索路径 | 按宿主的技能调用机制使用 |
+
+不同平台提供的工具并不完全相同。表格生成、Word 文件、联网检索、文件复制和定时任务等功能，需要宿主软件具备对应的文件系统、办公文档、浏览器/搜索或调度工具。缺少某项工具时，核心规则仍可用于分析和起草，但无法保证产生相同的文件或自动化结果。
 
 ## 核心能力
 
@@ -32,7 +47,7 @@
 
 ### 3. 多城市社保公积金核算
 
-制作核算表前，Skill 会先确认缴纳城市和适用年月，并支持一次配置多个城市。
+制作核算表前，助手会先确认缴纳城市和适用年月，并支持一次配置多个城市。
 
 针对每个城市，它要求查询养老、医疗、失业、工伤、生育和住房公积金的基数上下限、单位费率和个人费率。优先采用人社局、医保局、税务局、公积金中心和政府门户等官方来源，并记录政策名称、生效期间、链接与核验日期。
 
@@ -111,7 +126,7 @@
 
 自动化会明确数据来源、统计期间、输出位置、异常处理、通知条件和停止条件。默认仅在产生有意义的变化、完成、失败或需要人工操作时通知，避免无变化时反复打扰。
 
-## Skill 的优势
+## 主要优势
 
 ### 结构化交付，而不只是聊天结论
 
@@ -131,7 +146,7 @@
 
 ### 保护个人信息
 
-身份证号、联系电话、住址、工资、婚育信息和简历内容均按敏感个人信息处理。Skill 要求最小化使用和披露，不将真实个人数据写入示例、日志或 Skill 资产。
+身份证号、联系电话、住址、工资、婚育信息和简历内容均按敏感个人信息处理。规则要求最小化使用和披露，不将真实个人数据写入示例、日志或公开资产。
 
 ### 关注公平招聘
 
@@ -139,7 +154,7 @@
 
 ### 保留人工决策边界
 
-Skill 提供分析、证据和风险提示，不替代最终录用、处分、薪酬或劳动关系决策。置信度不足、硬性条件不清楚、项目职责不明确或时间线冲突时，会进入人工复核。
+本助手提供分析、证据和风险提示，不替代最终录用、处分、薪酬或劳动关系决策。置信度不足、硬性条件不清楚、项目职责不明确或时间线冲突时，会进入人工复核。
 
 ### 用工文件先标准、后风格
 
@@ -147,32 +162,85 @@ Skill 提供分析、证据和风险提示，不替代最终录用、处分、�
 
 ## 安装
 
-将仓库克隆到 Codex Skills 目录：
+无论使用哪个平台，都必须保留完整目录，确保 `SKILL.md` 与 `references/` 的相对位置不变。如果目标目录已经存在，请先备份或使用其他目录，不要直接覆盖已有版本。
+
+### Codex
 
 ```bash
 git clone https://github.com/Dean202305/hr-assistant-skill.git ~/.codex/skills/hr-assistant
 ```
 
-如果目标目录已存在，请先备份或选择其他目录，不要直接覆盖已有版本。
+### Claude Code
+
+全局安装：
+
+```bash
+git clone https://github.com/Dean202305/hr-assistant-skill.git ~/.claude/skills/hr-assistant
+```
+
+也可以安装到当前项目：
+
+```bash
+git clone https://github.com/Dean202305/hr-assistant-skill.git .claude/skills/hr-assistant
+```
+
+Claude Code 会从全局 `~/.claude/skills/` 或项目 `.claude/skills/` 读取技能。参考：[Claude Code 目录说明](https://code.claude.com/docs/en/claude-directory)。
+
+### WorkBuddy
+
+下载本仓库 ZIP，确认压缩包内保留 `hr-assistant/SKILL.md` 和 `hr-assistant/references/`，然后在 WorkBuddy 的“专家·技能·连接器 → 技能”中通过创建或导入入口安装。参考：[WorkBuddy Skill 文档](https://open.workbuddy.cn/en/docs/skill)。
+
+### DeepSeek Harness
+
+项目级安装：
+
+```bash
+git clone https://github.com/Dean202305/hr-assistant-skill.git .dsh/skills/hr-assistant
+```
+
+也可以安装到项目 `.agents/skills/`、用户 DSH Skills 目录，或配置的自定义 Skill 目录。DeepSeek Harness 不递归发现任意层级的 `SKILL.md`，因此 `hr-assistant` 应直接位于某个 Skill 根目录下。参考：[DeepSeek Harness Skills](https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/subsystems/skills.md)。
+
+### OpenClaw
+
+工作区安装：
+
+```bash
+git clone https://github.com/Dean202305/hr-assistant-skill.git skills/hr-assistant
+```
+
+也可以放入工作区 `.agents/skills/` 或 OpenClaw 配置的其他技能目录。参考：[OpenClaw Skills](https://docs.openclaw.ai/skills)。
+
+### 其他兼容软件
+
+将仓库克隆或复制到软件配置的 Skill 根目录，保证目录形态如下：
+
+```text
+<skill-root>/
+└── hr-assistant/
+    ├── SKILL.md
+    └── references/
+```
+
+如果软件不支持自动发现，可在系统提示词或项目指令中要求智能体：先读取 `hr-assistant/SKILL.md`，再按其中的路由规则读取相关 `references/` 文件。
 
 ## 使用示例
 
-安装后可在 Codex 中直接调用：
+安装后，可以使用平台支持的技能命令，或直接用自然语言要求智能体使用 `hr-assistant`。例如：
 
 ```text
-使用 $hr-assistant 为我创建员工花名册，身份证信息需要自动校验。
+使用 hr-assistant 为我创建员工花名册，身份证信息需要自动校验。
 ```
 
 ```text
-使用 $hr-assistant 按北京和上海两地政策制作本年度社保公积金核算表。
+使用 hr-assistant 按北京和上海两地政策制作本年度社保公积金核算表。
 ```
 
 ```text
-使用 $hr-assistant 分析这个目录里的全部简历，按中等标准筛选算法实习生。
+使用 hr-assistant 分析这个目录里的全部简历，按中等标准筛选算法实习生。
 ```
 
 ```text
-使用 $hr-assistant 草拟国庆节放假通知，先给标准版，再提供一版和蔼风格。
+使用 hr-assistant 草拟国庆节放假通知，先给标准版，再提供一版和蔼风格。
 ```
 
 ## 文件结构
@@ -181,7 +249,7 @@ git clone https://github.com/Dean202305/hr-assistant-skill.git ~/.codex/skills/h
 hr-assistant/
 ├── SKILL.md
 ├── agents/
-│   └── openai.yaml
+│   └── openai.yaml        # 可选的平台展示元数据，不影响其他平台读取
 └── references/
     ├── automations.md
     ├── china-id-rules.md
@@ -191,7 +259,7 @@ hr-assistant/
     └── workbook-specs.md
 ```
 
-`SKILL.md`负责能力路由和通用边界；`references/`按任务类型提供详细规则，使每次调用只读取与当前任务有关的内容。
+`SKILL.md`负责能力路由和通用边界；`references/`按任务类型提供详细规则，使每次调用只读取与当前任务有关的内容。`agents/openai.yaml`只是可选的界面元数据，其他平台可以忽略，不影响核心能力。
 
 ## 合规与责任说明
 
