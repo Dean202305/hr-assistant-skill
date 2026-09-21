@@ -1,0 +1,4 @@
+interface:
+  display_name: "HR 助手"
+  short_description: "生成HR表格、筛选简历、草拟公告并安排定时任务"
+  default_prompt: "使用 $hr-assistant 根据我的需求处理 HR 表格、简历或内部公告。"
