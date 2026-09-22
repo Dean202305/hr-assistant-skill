@@ -1,8 +1,8 @@
-# HR Assistant：通用 HR Agent Skill
+# AIHR：一句话调用 HR 与企业架构知识库
 
-一个面向中国大陆人力资源工作的通用 Agent Skill，帮助 HR 将自然语言需求转换为可维护、可复核的表格、简历分析、内部公告和自动化任务；当前迭代已扩展到 360 度环评、岗位胜任力模型与人才盘点，覆盖从日常事务到人才发展规划的更多场景。
+AIHR 是一个统一入口的通用 Agent Skill。用户用一句话提出“AIHR + 需求”，它根据需求关键词加载对应知识库，完成 HR 表格、简历分析、内部公告、自动化任务、360 度环评、胜任力模型、人才盘点或企业架构规划设计。
 
-本仓库现同时提供独立的 [企业架构规划与设计 Skill](skills/enterprise-architecture/SKILL.md)。它与根目录的 `hr-assistant` 分开安装、分开触发，不会把 IT 架构规则加载进普通 HR 任务。
+只有一个 [SKILL.md](SKILL.md) 入口和一组按需读取的 `references/` 知识库；企业架构不再需要另装或另行触发。关键词只是路由线索，Skill 仍会理解完整需求、附件和上下文；跨模块任务可同时读取多个知识库。
 
 核心采用通用的 `SKILL.md + references/` 目录结构，不绑定特定模型，可安装到 Codex、Claude Code、WorkBuddy、DeepSeek Harness、OpenClaw，以及其他能够读取目录式 Agent Skills 的软件或智能体框架。
 
@@ -14,7 +14,7 @@
 | --- | --- | --- |
 | 基础版 | 2026-09-21 | 花名册、薪酬与多城市社保公积金、招聘台账与漏斗、批量简历筛选、公告制度草拟和定时任务；公开仓库并完善跨平台安装说明。 |
 | 人才管理迭代版 | 2026-09-22 | 新增 360 度环评、岗位胜任力模型、人才盘点九宫格及四象限；补充行为证据、评分口径、校准、匿名保护、继任与培养行动的规则。 |
-| 企业架构扩展版 | 2026-09-22 | 新增独立的 `enterprise-architecture` Skill，覆盖现状诊断、业务/数据/应用/技术架构、跨层映射、集成设计、差距分析和实施路线图。 |
+| AIHR 统一入口版 | 2026-09-22 | 将企业架构规划纳入同一 Skill；使用“AIHR + 需求”一句话触发，按关键词加载 HR 或企业架构知识库。 |
 
 这里的“迭代版”是功能更新记录，尚未创建正式 GitHub Release 或版本标签。安装者可通过仓库提交记录查看具体变更；实际表格仍需按企业岗位、政策和评价标准配置。
 
@@ -22,14 +22,16 @@
 
 | 平台 | 支持方式 | 调用方式 |
 | --- | --- | --- |
-| Codex | 将目录安装到用户或项目 Skills 目录 | 使用 `$hr-assistant` 或自然语言触发 |
-| Claude Code | 安装到全局或项目 `.claude/skills/` | 使用 `/hr-assistant` 或由 Claude 自动选择 |
+| Codex | 将目录安装到用户或项目 Skills 目录 | 使用 `$aihr`，或输入“AIHR + 需求” |
+| Claude Code | 安装到全局或项目 `.claude/skills/` | 使用 `/aihr`，或输入“AIHR + 需求” |
 | WorkBuddy | 将仓库打包为 ZIP，通过技能创建/导入入口安装 | 在会话中选择或调用已安装技能 |
 | DeepSeek Harness | 安装到 `.dsh/skills/`、`.agents/skills/` 或配置的自定义目录 | 通过技能目录或 Skill 工具加载 |
-| OpenClaw | 安装到工作区 `skills/`、`.agents/skills/` 或用户技能目录 | 使用 `$hr-assistant` 或技能选择器 |
+| OpenClaw | 安装到工作区 `skills/`、`.agents/skills/` 或用户技能目录 | 使用 `$aihr` 或技能选择器 |
 | 其他 Agent Harness | 将完整目录加入其技能搜索路径 | 按宿主的技能调用机制使用 |
 
 不同平台提供的工具并不完全相同。表格生成、Word 文件、联网检索、文件复制和定时任务等功能，需要宿主软件具备对应的文件系统、办公文档、浏览器/搜索或调度工具。缺少某项工具时，核心规则仍可用于分析和起草，但无法保证产生相同的文件或自动化结果。
+
+“AIHR + 需求”的自然语言触发取决于宿主是否支持技能自动发现；若未自动加载，使用该平台的显式技能命令（如 Codex 的 `$aihr`），仍然只需一句话。
 
 ## 核心能力
 
@@ -193,7 +195,7 @@ Skill 可以据此生成可填写问卷、原始答卷 Excel、选项分布和�
 
 公告先保证事实完整、行动明确和表达稳妥，再按用户需要调整风格。遇到明显违法或高风险条款时，会提示风险并提供尽量接近原业务目的的替代写法，而不会把高风险内容包装成可直接发布的正式文件。
 
-## 扩展 Skill：企业架构规划与设计
+## 企业架构规划与设计知识库
 
 面向企业级或业务域级数字化规划，从战略目标和端到端价值流出发，形成可实施的架构方案。它把用户提供的长篇架构材料提炼为可重复执行的工作流，而非原文转载：
 
@@ -205,17 +207,7 @@ Skill 可以据此生成可填写问卷、原始答卷 Excel、选项分布和�
 
 它的优势在于跨层可追溯和落地检查：每项建设能说明所服务的业务目标，每个关键目标能找到支撑能力、数据与系统，并把未核实信息保留为待确认项。依据用户资料提炼的方法与 [The Open Group 对 TOGAF/ArchiMate 的公开说明](https://help.opengroup.org/hc/en-us/articles/32115987894930-How-the-ArchiMate-Language-and-the-TOGAF-Standard-Complement-Each-Other)相容，但不是 TOGAF 标准全文或官方认证实施指南。云原生只是设计选项，参见 [CNCF 的定义](https://www.cncf.io/about/who-we-are/)。
 
-### 单独安装
-
-已有仓库副本时，将 `skills/enterprise-architecture/` 整个目录复制到所用软件的 Skill 根目录，使 `enterprise-architecture/SKILL.md` 直接位于该根目录下一层。例如 Codex：
-
-```bash
-cp -R hr-assistant-skill/skills/enterprise-architecture ~/.codex/skills/enterprise-architecture
-```
-
-若目标目录已存在，先检查并备份，不要直接覆盖。Claude Code、WorkBuddy、DeepSeek Harness、OpenClaw 等平台也可按各自的技能目录或导入方式安装这个独立文件夹。仅克隆根目录的 HR Skill 不会让所有平台自动发现嵌套 Skill。
-
-示例：`使用 enterprise-architecture 梳理订单到交付的跨系统流程，输出 4A 目标蓝图、接口目录与分阶段实施路线图；未知现状请列出待调研项。`
+企业架构与 HR 使用同一个 AIHR 入口，细节分别存于 [规划流程](references/enterprise-architecture-planning.md) 和 [设计决策](references/enterprise-architecture-decisions.md)。示例：`AIHR 梳理订单到交付的跨系统流程，输出 4A 目标蓝图、接口目录与分阶段实施路线图；未知现状请列出待调研项。`
 
 ## 安装
 
@@ -224,7 +216,7 @@ cp -R hr-assistant-skill/skills/enterprise-architecture ~/.codex/skills/enterpri
 ### Codex
 
 ```bash
-git clone https://github.com/Dean202305/hr-assistant-skill.git ~/.codex/skills/hr-assistant
+git clone https://github.com/Dean202305/hr-assistant-skill.git ~/.codex/skills/aihr
 ```
 
 ### Claude Code
@@ -232,37 +224,37 @@ git clone https://github.com/Dean202305/hr-assistant-skill.git ~/.codex/skills/h
 全局安装：
 
 ```bash
-git clone https://github.com/Dean202305/hr-assistant-skill.git ~/.claude/skills/hr-assistant
+git clone https://github.com/Dean202305/hr-assistant-skill.git ~/.claude/skills/aihr
 ```
 
 也可以安装到当前项目：
 
 ```bash
-git clone https://github.com/Dean202305/hr-assistant-skill.git .claude/skills/hr-assistant
+git clone https://github.com/Dean202305/hr-assistant-skill.git .claude/skills/aihr
 ```
 
 Claude Code 会从全局 `~/.claude/skills/` 或项目 `.claude/skills/` 读取技能。参考：[Claude Code 目录说明](https://code.claude.com/docs/en/claude-directory)。
 
 ### WorkBuddy
 
-下载本仓库 ZIP，确认压缩包内保留 `hr-assistant/SKILL.md` 和 `hr-assistant/references/`，然后在 WorkBuddy 的“专家·技能·连接器 → 技能”中通过创建或导入入口安装。参考：[WorkBuddy Skill 文档](https://open.workbuddy.cn/en/docs/skill)。
+下载本仓库 ZIP，确认导入目录内保留 `aihr/SKILL.md` 和 `aihr/references/`，然后在 WorkBuddy 的“专家·技能·连接器 → 技能”中通过创建或导入入口安装。参考：[WorkBuddy Skill 文档](https://open.workbuddy.cn/en/docs/skill)。
 
 ### DeepSeek Harness
 
 项目级安装：
 
 ```bash
-git clone https://github.com/Dean202305/hr-assistant-skill.git .dsh/skills/hr-assistant
+git clone https://github.com/Dean202305/hr-assistant-skill.git .dsh/skills/aihr
 ```
 
-也可以安装到项目 `.agents/skills/`、用户 DSH Skills 目录，或配置的自定义 Skill 目录。DeepSeek Harness 不递归发现任意层级的 `SKILL.md`，因此 `hr-assistant` 应直接位于某个 Skill 根目录下。参考：[DeepSeek Harness Skills](https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/subsystems/skills.md)。
+也可以安装到项目 `.agents/skills/`、用户 DSH Skills 目录，或配置的自定义 Skill 目录。DeepSeek Harness 不递归发现任意层级的 `SKILL.md`，因此 `aihr` 应直接位于某个 Skill 根目录下。参考：[DeepSeek Harness Skills](https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/subsystems/skills.md)。
 
 ### OpenClaw
 
 工作区安装：
 
 ```bash
-git clone https://github.com/Dean202305/hr-assistant-skill.git skills/hr-assistant
+git clone https://github.com/Dean202305/hr-assistant-skill.git skills/aihr
 ```
 
 也可以放入工作区 `.agents/skills/` 或 OpenClaw 配置的其他技能目录。参考：[OpenClaw Skills](https://docs.openclaw.ai/skills)。
@@ -273,71 +265,67 @@ git clone https://github.com/Dean202305/hr-assistant-skill.git skills/hr-assista
 
 ```text
 <skill-root>/
-└── hr-assistant/
+└── aihr/
     ├── SKILL.md
     └── references/
 ```
 
-如果软件不支持自动发现，可在系统提示词或项目指令中要求智能体：先读取 `hr-assistant/SKILL.md`，再按其中的路由规则读取相关 `references/` 文件。
+如果软件不支持自动发现，可在系统提示词或项目指令中要求智能体：遇到“AIHR”时先读取 `aihr/SKILL.md`，再按关键词读取相关 `references/` 文件。
 
 ## 使用示例
 
-安装后，可以使用平台支持的技能命令，或直接用自然语言要求智能体使用 `hr-assistant`。例如：
+安装后，直接输入“AIHR + 需求”；在需要显式技能调用的平台，可使用 `$aihr` 或该平台的对应命令。例如：
 
 ```text
-使用 hr-assistant 为我创建员工花名册，身份证信息需要自动校验。
+AIHR 为我创建员工花名册，身份证信息需要自动校验。
 ```
 
 ```text
-使用 hr-assistant 按北京和上海两地政策制作本年度社保公积金核算表。
+AIHR 按北京和上海两地政策制作本年度社保公积金核算表。
 ```
 
 ```text
-使用 hr-assistant 分析这个目录里的全部简历，按中等标准筛选算法实习生。
+AIHR 分析这个目录里的全部简历，按中等标准筛选算法实习生。
 ```
 
 ```text
-使用 hr-assistant 草拟国庆节放假通知，先给标准版，再提供一版和蔼风格。
+AIHR 草拟国庆节放假通知，先给标准版，再提供一版和蔼风格。
 ```
 
 ```text
-使用 hr-assistant 根据通用版题库制作 360 度环评表，先保留原始选项并统计各题分布。
+AIHR 根据通用版题库制作 360 度环评表，先保留原始选项并统计各题分布。
 ```
 
 ```text
-使用 hr-assistant 为客服主管建立岗位胜任力模型，先做能力词典和行为分级草案，不预设权重。
+AIHR 为客服主管建立岗位胜任力模型，先做能力词典和行为分级草案，不预设权重。
 ```
 
 ```text
-使用 hr-assistant 建立人才盘点九宫格，先定义绩效和目标岗位潜力的分档，再生成可校准的人才地图。
+AIHR 建立人才盘点九宫格，先定义绩效和目标岗位潜力的分档，再生成可校准的人才地图。
 ```
 
 ## 文件结构
 
 ```text
-hr-assistant/
+aihr/
 ├── SKILL.md
 ├── agents/
 │   └── openai.yaml        # 可选的平台展示元数据，不影响其他平台读取
-├── references/
+└── references/
     ├── automations.md
     ├── 360-feedback.md
     ├── china-id-rules.md
     ├── competency-model.md
+    ├── enterprise-architecture-decisions.md
+    ├── enterprise-architecture-planning.md
     ├── internal-document-drafting.md
     ├── payroll-template.md
     ├── resume-screening.md
     ├── talent-review.md
     └── workbook-specs.md
-└── skills/
-    └── enterprise-architecture/  # 需单独安装的扩展 Skill
-        ├── SKILL.md
-        └── references/
-            ├── design-decisions.md
-            └── planning-and-deliverables.md
 ```
 
-`SKILL.md`负责能力路由和通用边界；`references/`按任务类型提供详细规则，使每次调用只读取与当前任务有关的内容。`agents/openai.yaml`只是可选的界面元数据，其他平台可以忽略，不影响核心能力。
+`SKILL.md` 负责统一触发、关键词路由和通用边界；`references/` 按任务类型提供详细规则，使每次调用只读取相关知识库。`agents/openai.yaml` 只是可选的界面元数据，其他平台可以忽略，不影响核心能力。
 
 ## 合规与责任说明
 

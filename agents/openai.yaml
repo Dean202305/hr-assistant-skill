@@ -1,4 +1,4 @@
 interface:
-  display_name: "HR 助手"
-  short_description: "生成HR表格、筛选简历、草拟公告并安排定时任务"
-  default_prompt: "使用 $hr-assistant 根据我的需求处理 HR 表格、简历或内部公告。"
+  display_name: "AIHR"
+  short_description: "一句话处理 HR 与企业架构任务，按关键词加载知识库"
+  default_prompt: "使用 $aihr 根据我的需求选择知识库并完成任务。"
