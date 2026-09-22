@@ -2,6 +2,8 @@
 
 一个面向中国大陆人力资源工作的通用 Agent Skill，帮助 HR 将自然语言需求转换为可维护、可复核的表格、简历分析、内部公告和自动化任务；当前迭代已扩展到 360 度环评、岗位胜任力模型与人才盘点，覆盖从日常事务到人才发展规划的更多场景。
 
+本仓库现同时提供独立的 [企业架构规划与设计 Skill](skills/enterprise-architecture/SKILL.md)。它与根目录的 `hr-assistant` 分开安装、分开触发，不会把 IT 架构规则加载进普通 HR 任务。
+
 核心采用通用的 `SKILL.md + references/` 目录结构，不绑定特定模型，可安装到 Codex、Claude Code、WorkBuddy、DeepSeek Harness、OpenClaw，以及其他能够读取目录式 Agent Skills 的软件或智能体框架。
 
 它不仅生成内容，还强调公式正确性、政策时效性、证据可追溯、敏感数据保护和人工复核边界。新加入的人才类模板保留评分口径、校准记录和版本信息，避免把一次问卷、一张九宫格或未经验证的能力标签直接变成人事决定。
@@ -12,6 +14,7 @@
 | --- | --- | --- |
 | 基础版 | 2026-09-21 | 花名册、薪酬与多城市社保公积金、招聘台账与漏斗、批量简历筛选、公告制度草拟和定时任务；公开仓库并完善跨平台安装说明。 |
 | 人才管理迭代版 | 2026-09-22 | 新增 360 度环评、岗位胜任力模型、人才盘点九宫格及四象限；补充行为证据、评分口径、校准、匿名保护、继任与培养行动的规则。 |
+| 企业架构扩展版 | 2026-09-22 | 新增独立的 `enterprise-architecture` Skill，覆盖现状诊断、业务/数据/应用/技术架构、跨层映射、集成设计、差距分析和实施路线图。 |
 
 这里的“迭代版”是功能更新记录，尚未创建正式 GitHub Release 或版本标签。安装者可通过仓库提交记录查看具体变更；实际表格仍需按企业岗位、政策和评价标准配置。
 
@@ -190,6 +193,30 @@ Skill 可以据此生成可填写问卷、原始答卷 Excel、选项分布和�
 
 公告先保证事实完整、行动明确和表达稳妥，再按用户需要调整风格。遇到明显违法或高风险条款时，会提示风险并提供尽量接近原业务目的的替代写法，而不会把高风险内容包装成可直接发布的正式文件。
 
+## 扩展 Skill：企业架构规划与设计
+
+面向企业级或业务域级数字化规划，从战略目标和端到端价值流出发，形成可实施的架构方案。它把用户提供的长篇架构材料提炼为可重复执行的工作流，而非原文转载：
+
+- 梳理规划边界、现状证据、业务能力与流程，区分事实、假设和建议。
+- 形成业务、数据、应用、技术四类视图，并用映射表追溯“业务目标 → 能力/流程 → 数据 → 应用/服务 → 技术”。
+- 对跨系统流程设计应用、数据和门户集成，明确接口契约、数据归属、运行责任与安全要求。
+- 比较目标与现状，产出差距、备选方案、分阶段路线图、治理责任和验收指标。
+- 对 SOA、微服务、PBC、云原生、AI 等只做场景化选型与权衡，不预设企业必须采用某套技术栈。
+
+它的优势在于跨层可追溯和落地检查：每项建设能说明所服务的业务目标，每个关键目标能找到支撑能力、数据与系统，并把未核实信息保留为待确认项。依据用户资料提炼的方法与 [The Open Group 对 TOGAF/ArchiMate 的公开说明](https://help.opengroup.org/hc/en-us/articles/32115987894930-How-the-ArchiMate-Language-and-the-TOGAF-Standard-Complement-Each-Other)相容，但不是 TOGAF 标准全文或官方认证实施指南。云原生只是设计选项，参见 [CNCF 的定义](https://www.cncf.io/about/who-we-are/)。
+
+### 单独安装
+
+已有仓库副本时，将 `skills/enterprise-architecture/` 整个目录复制到所用软件的 Skill 根目录，使 `enterprise-architecture/SKILL.md` 直接位于该根目录下一层。例如 Codex：
+
+```bash
+cp -R hr-assistant-skill/skills/enterprise-architecture ~/.codex/skills/enterprise-architecture
+```
+
+若目标目录已存在，先检查并备份，不要直接覆盖。Claude Code、WorkBuddy、DeepSeek Harness、OpenClaw 等平台也可按各自的技能目录或导入方式安装这个独立文件夹。仅克隆根目录的 HR Skill 不会让所有平台自动发现嵌套 Skill。
+
+示例：`使用 enterprise-architecture 梳理订单到交付的跨系统流程，输出 4A 目标蓝图、接口目录与分阶段实施路线图；未知现状请列出待调研项。`
+
 ## 安装
 
 无论使用哪个平台，都必须保留完整目录，确保 `SKILL.md` 与 `references/` 的相对位置不变。如果目标目录已经存在，请先备份或使用其他目录，不要直接覆盖已有版本。
@@ -292,7 +319,7 @@ hr-assistant/
 ├── SKILL.md
 ├── agents/
 │   └── openai.yaml        # 可选的平台展示元数据，不影响其他平台读取
-└── references/
+├── references/
     ├── automations.md
     ├── 360-feedback.md
     ├── china-id-rules.md
@@ -302,6 +329,12 @@ hr-assistant/
     ├── resume-screening.md
     ├── talent-review.md
     └── workbook-specs.md
+└── skills/
+    └── enterprise-architecture/  # 需单独安装的扩展 Skill
+        ├── SKILL.md
+        └── references/
+            ├── design-decisions.md
+            └── planning-and-deliverables.md
 ```
 
 `SKILL.md`负责能力路由和通用边界；`references/`按任务类型提供详细规则，使每次调用只读取与当前任务有关的内容。`agents/openai.yaml`只是可选的界面元数据，其他平台可以忽略，不影响核心能力。
